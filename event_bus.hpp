@@ -97,4 +97,4 @@ class event_bus
 
 typedef event_bus<synchronous_event_publish_strategy> synchro_event_bus;
 typedef event_bus<asynchronous_event_publish_strategy> asynchro_event_bus;
-}// namespace event_bus
+}// namespace events
