@@ -1,11 +1,9 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <typeinfo>
 #include <memory>
+#include <typeinfo>
 #include <typeindex>
-#include <iostream>
-#include <type_traits>
 #include <future>
 
 namespace events
@@ -42,7 +40,7 @@ class asynchronous_event_publish_strategy
       void operator()(const event &ev,
           const std::vector< event_subscriber<event> * > &subscribers)
       {
-        auto fut = std::async(std::launch::async, strat, ev, subscribers);
+        std::async(std::launch::async, strat, ev, subscribers);
       }
 };
 
