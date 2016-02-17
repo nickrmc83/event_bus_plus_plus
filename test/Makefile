@@ -7,7 +7,6 @@
 
 TARGET=event_bus_test
 VPATH=../include
-CXX?=c++
 .PHONY=test
 
 $(TARGET) : event_bus_test.cpp event_bus.hpp
