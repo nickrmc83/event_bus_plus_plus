@@ -1,3 +1,7 @@
+/**
+ * This source code is governed by by the boost v1 licensing terms and conditions.
+ * Copyright 2016 Nicholas A. Smith (nickrmc83@gmail.com)
+ */
 #include "event_bus.hpp"
 #include <iostream>
 #include <string>
@@ -18,7 +22,7 @@ template<typename T>
 class subscriber : public event_subscriber<T>
 {
   public:
-    void handle_event(const T &ev)
+    void operator()(const T &ev)
     {
       std::cout << "Received event of value " << ev.event_value << std::endl;
     }
@@ -29,11 +33,15 @@ typedef subscriber<string_event> string_subscriber;
 
 int main(int argc, char **argv)
 {
+  int result = 1;
   asynchro_event_bus bus;
-  int_subscriber isubscriber;
+  int_subscriber *ptr = new int_subscriber();
+  std::shared_ptr<event_subscriber<event<int>>> isubscriber1(ptr);
+  int_subscriber isubscriber2;
   string_subscriber ssubscriber1;
   string_subscriber ssubscriber2;
-  bus.subscribe(&isubscriber)
+  bus.subscribe(&isubscriber2)
+    .subscribe(isubscriber1)
     .subscribe(&ssubscriber1)
     .subscribe(&ssubscriber2);
   int_event ievent;
@@ -47,7 +55,20 @@ int main(int argc, char **argv)
     .publish(sevent)
     .publish(sevent)
     .publish(sevent)
-    .publish(sevent);
-  bus.unsubscribe(&isubscriber);
-  return 0;
+    .publish(sevent)
+    .publish(true);
+  try
+  {
+    bus.subscribe(isubscriber1);
+  }
+  catch(const already_subscribed_exception &ex)
+  {
+    result = 0;
+    std::cout << "Caught expected exception:" << ex.what() << std::endl;
+  }
+  bus.unsubscribe(isubscriber1);
+  bus.subscribe(isubscriber1);
+  bus.unsubscribe(isubscriber1);
+  bus.unsubscribe(&isubscriber2);
+  return result;
 }
