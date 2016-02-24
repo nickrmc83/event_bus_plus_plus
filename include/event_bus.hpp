@@ -111,8 +111,7 @@ namespace events
         template<typename T>
           std::shared_ptr<T> get_shared(T *obj)
           {
-            null_deleter<T> deleter;
-            return std::shared_ptr<T>(obj, deleter);
+            return std::shared_ptr<T>(obj, null_deleter<T>());
           }
 
       public:
@@ -120,8 +119,8 @@ namespace events
         template<typename event>
           event_bus &subscribe(std::shared_ptr<event_subscriber<event>> &subscriber)
           {
-            subscribers_type &subscribers = event_subscriber_map[std::type_index(typeid(event))];
-            subscribers_iterator where = std::find(subscribers.begin(), subscribers.end(), subscriber);
+            auto &subscribers = event_subscriber_map[std::type_index(typeid(event))];
+            auto where = std::find(subscribers.begin(), subscribers.end(), subscriber);
             if(where != subscribers.end())
             {
               throw already_subscribed_exception::create_exception(subscriber);
@@ -141,8 +140,8 @@ namespace events
         template<typename event>
           event_bus &unsubscribe(std::shared_ptr<event_subscriber<event>> &subscriber)
           {
-            subscribers_type &subscribers = event_subscriber_map[std::type_index(typeid(event))];
-            subscribers_iterator where = std::find(subscribers.begin(), subscribers.end(), subscriber);
+            auto &subscribers = event_subscriber_map[std::type_index(typeid(event))];
+            auto where = std::find(subscribers.begin(), subscribers.end(), subscriber);
             if(where != subscribers.end())
             {
               subscribers.erase(where);
@@ -160,13 +159,13 @@ namespace events
         template<typename event>
           event_bus &publish(const event &ev)
           {
-            subscribers_type &subscribers = event_subscriber_map[std::type_index(typeid(event))];
+            auto &subscribers = event_subscriber_map[std::type_index(typeid(event))];
             std::vector< std::shared_ptr< event_subscriber<event> > > publish_to;
             for(subscribers_iterator subscriber = subscribers.begin();
                 subscriber != subscribers.end();
                 subscriber++)
             {
-              std::shared_ptr<event_subscriber<event>> who =
+              auto who =
                 std::static_pointer_cast< event_subscriber<event> >(*subscriber);
               publish_to.push_back(who);
             }
@@ -175,6 +174,12 @@ namespace events
           }
     };
 
+  /**
+   * Synchronous event publishing.
+   */
   typedef event_bus<synchronous_event_publish_strategy> synchro_event_bus;
+  /**
+   * Asynchronous event publishing.
+   */
   typedef event_bus<asynchronous_event_publish_strategy> asynchro_event_bus;
 }// namespace events

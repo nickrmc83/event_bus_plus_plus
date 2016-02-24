@@ -7,7 +7,7 @@
 
 TARGET=event_bus_test
 VPATH=../include
-.PHONY=test
+.PHONY=clean valgrind test
 
 $(TARGET) : event_bus_test.cpp event_bus.hpp
 	$(CXX) -I../include -std=c++11 -g -O0 -o $@ $< -pthread
@@ -17,3 +17,6 @@ clean:
 
 test: $(TARGET)
 	./$(TARGET)
+
+valgrind: $(TARGET)
+	valgrind --tool=memcheck ./$(TARGET)
