@@ -16,7 +16,7 @@ clean:
 	rm -f $(TARGET)
 
 test: $(TARGET)
-	./$(TARGET)
+	./$^
 
 valgrind: $(TARGET)
-	valgrind --tool=memcheck ./$(TARGET)
+	valgrind --tool=memcheck ./$^

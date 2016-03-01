@@ -134,7 +134,7 @@ namespace events
           {
             // Subscribe using a smart_pointer that will not delete the pointer.
             auto shared = get_shared(subscriber);
-            return this->subscribe(shared);
+            return subscribe(shared);
           }
 
         template<typename event>
@@ -153,7 +153,7 @@ namespace events
           event_bus &unsubscribe(event_subscriber<event> *subscriber)
           {
             auto shared = get_shared(subscriber);
-            return this->unsubscribe(shared);
+            return unsubscribe(shared);
           }
 
         template<typename event>
