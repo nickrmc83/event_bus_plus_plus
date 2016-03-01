@@ -24,7 +24,7 @@ class subscriber : public event_subscriber<T>
   public:
     void operator()(const T &ev) noexcept
     {
-      std::cout << "Received event of value " << ev.event_value << std::endl;
+      std::cout << "Event Handler: Received event of value " << ev.event_value << std::endl;
     }
 };
 
@@ -59,12 +59,13 @@ int main(int argc, char **argv)
     .publish(true);
   try
   {
+    std::cout << "Info: Invoking expected exception ..." << std::endl;
     bus.subscribe(isubscriber1);
   }
   catch(const already_subscribed_exception &ex)
   {
     result = 0;
-    std::cout << "Caught expected exception:" << ex.what() << std::endl;
+    std::cout << "Info: Caught expected exception:" << ex.what() << std::endl;
   }
   bus.unsubscribe(isubscriber1);
   bus.subscribe(isubscriber1);
