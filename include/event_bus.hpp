@@ -23,7 +23,7 @@ namespace events
     class event_subscriber : public event_subscriber_base
   {
     public:
-      virtual void operator()(const event &ev) = 0;
+      virtual void operator()(const event &ev) noexcept = 0;
   };
 
   /**

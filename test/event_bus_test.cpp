@@ -22,7 +22,7 @@ template<typename T>
 class subscriber : public event_subscriber<T>
 {
   public:
-    void operator()(const T &ev)
+    void operator()(const T &ev) noexcept
     {
       std::cout << "Received event of value " << ev.event_value << std::endl;
     }
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   int result = 1;
   asynchro_event_bus bus;
   int_subscriber *ptr = new int_subscriber();
-  std::shared_ptr<event_subscriber<event<int>>> isubscriber1(ptr);
+  std::shared_ptr<event_subscriber<int_event>> isubscriber1(ptr);
   int_subscriber isubscriber2;
   string_subscriber ssubscriber1;
   string_subscriber ssubscriber2;
