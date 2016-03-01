@@ -177,9 +177,9 @@ namespace events
   /**
    * Synchronous event publishing.
    */
-  typedef event_bus<synchronous_event_publish_strategy> synchro_event_bus;
+  typedef event_bus<synchronous_event_publish_strategy> sync_event_bus;
   /**
    * Asynchronous event publishing.
    */
-  typedef event_bus<asynchronous_event_publish_strategy> asynchro_event_bus;
+  typedef event_bus<asynchronous_event_publish_strategy> async_event_bus;
 }// namespace events

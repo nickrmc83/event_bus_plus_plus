@@ -34,7 +34,7 @@ typedef subscriber<string_event> string_subscriber;
 int main(int argc, char **argv)
 {
   int result = 1;
-  asynchro_event_bus bus;
+  async_event_bus bus;
   int_subscriber *ptr = new int_subscriber();
   std::shared_ptr<event_subscriber<int_event>> isubscriber1(ptr);
   int_subscriber isubscriber2;
