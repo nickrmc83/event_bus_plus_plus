@@ -109,7 +109,7 @@ namespace events
 
         // Get a shared ptr that uses a null_deleter.
         template<typename T>
-          std::shared_ptr<T> get_shared(T *obj)
+          static std::shared_ptr<T> get_shared(T *obj) 
           {
             return std::shared_ptr<T>(obj, null_deleter<T>());
           }
@@ -138,7 +138,7 @@ namespace events
           }
 
         template<typename event>
-          event_bus &unsubscribe(std::shared_ptr<event_subscriber<event>> &subscriber)
+          event_bus &unsubscribe(const std::shared_ptr<event_subscriber<event>> &subscriber)
           {
             auto &subscribers = event_subscriber_map[std::type_index(typeid(event))];
             auto where = std::find(subscribers.begin(), subscribers.end(), subscriber);
@@ -150,9 +150,10 @@ namespace events
           }
 
         template<typename event>
-          event_bus &unsubscribe(event_subscriber<event> *subscriber)
+          event_bus &unsubscribe(const event_subscriber<event> *subscriber)
           {
-            auto shared = get_shared(subscriber);
+            const std::shared_ptr<event_subscriber<event>> shared = 
+              get_shared(const_cast<event_subscriber<event> *>(subscriber));
             return unsubscribe(shared);
           }
 
@@ -175,11 +176,11 @@ namespace events
     };
 
   /**
-   * Synchronous event publishing.
+   * Alias for Synchronous event publishing.
    */
   typedef event_bus<synchronous_event_publish_strategy> sync_event_bus;
   /**
-   * Asynchronous event publishing.
+   * Alias for Asynchronous event publishing.
    */
   typedef event_bus<asynchronous_event_publish_strategy> async_event_bus;
 }// namespace events

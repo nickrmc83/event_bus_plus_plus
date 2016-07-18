@@ -65,7 +65,7 @@ int main(int argc, char **argv)
   catch(const already_subscribed_exception &ex)
   {
     result = 0;
-    std::cout << "Info: Caught expected exception:" << ex.what() << std::endl;
+    std::cout << "Info: Caught expected exception: " << ex.what() << std::endl;
   }
   bus.unsubscribe(isubscriber1);
   bus.subscribe(isubscriber1);
