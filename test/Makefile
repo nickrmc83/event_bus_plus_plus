@@ -10,7 +10,7 @@ VPATH=../include
 .PHONY=clean valgrind test
 
 $(TARGET) : event_bus_test.cpp event_bus.hpp
-	$(CXX) -I../include -std=c++11 -g -O0 -o $@ $< -pthread
+	$(CXX) -Wall -I../include -std=c++11 -g -O0 -o $@ $< -pthread
 
 clean:
 	rm -f $(TARGET)
@@ -19,4 +19,4 @@ test: $(TARGET)
 	./$^
 
 valgrind: $(TARGET)
-	valgrind --tool=memcheck ./$^
+	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all ./$^

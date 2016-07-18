@@ -2,14 +2,14 @@
  * This source code is governed by by the boost v1 licensing terms and conditions.
  * Copyright 2016 Nicholas A. Smith (nickrmc83@gmail.com)
  */
-#include <vector>
-#include <map>
-#include <string>
-#include <memory>
-#include <typeinfo>
-#include <typeindex>
-#include <future>
 #include <algorithm>
+#include <future>
+#include <map>
+#include <memory>
+#include <string>
+#include <typeindex>
+#include <typeinfo>
+#include <vector>
 
 namespace events
 {
@@ -39,17 +39,27 @@ namespace events
       }
 
     public:
+      /**
+       * Factory function for creating an already_subscribed_exeception.
+       */
       template<typename T>
         static already_subscribed_exception create_exception(const T &ref)
         {
           return already_subscribed_exception(typeid(ref).name());
         }
 
+      already_subscribed_exception() = delete;
+
       const char *what() const noexcept
       {
         return error.c_str();
       }
   };
+
+  template<typename event>
+    using event_subscriber_t = std::shared_ptr<event_subscriber<event>>;
+  template<typename event>
+    using event_subscriber_list_t = std::vector<event_subscriber_t<event>>;
 
   /**
    * Synchronous event publishing strategy.
@@ -59,7 +69,7 @@ namespace events
     public:
       template<typename event>
         void operator()(const event &ev,
-            const std::vector< std::shared_ptr< event_subscriber<event> > > &subscribers)
+            const event_subscriber_list_t<event> &subscribers)
         {
           for(auto subscriber = subscribers.begin();
               subscriber != subscribers.end();
@@ -80,7 +90,7 @@ namespace events
     public:
       template<typename event>
         void operator()(const event &ev,
-            const std::vector< std::shared_ptr< event_subscriber<event> > > &subscribers)
+            const event_subscriber_list_t<event> &subscribers)
         {
           std::async(std::launch::async, strat, ev, subscribers);
         }
@@ -161,13 +171,13 @@ namespace events
           event_bus &publish(const event &ev)
           {
             auto &subscribers = event_subscriber_map[std::type_index(typeid(event))];
-            std::vector< std::shared_ptr< event_subscriber<event> > > publish_to;
+            event_subscriber_list_t<event> publish_to;
             for(subscribers_iterator subscriber = subscribers.begin();
                 subscriber != subscribers.end();
                 subscriber++)
             {
               auto who =
-                std::static_pointer_cast< event_subscriber<event> >(*subscriber);
+                std::static_pointer_cast<event_subscriber<event>>(*subscriber);
               publish_to.push_back(who);
             }
             strategy(ev, publish_to);
